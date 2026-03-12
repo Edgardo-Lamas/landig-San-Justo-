@@ -2307,14 +2307,39 @@
                 timestamp: new Date().toISOString(),
             };
 
-            console.log('DIAGNÓSTICO DIGITAL — PAYLOAD COMPLETO:', JSON.stringify(payload, null, 2));
-            // → Conectar con backend, Google Apps Script, Formspree, Make/Zapier, etc.
+            // Mostrar estado de carga
+            const btn = document.querySelector('.btn-submit');
+            const btnText = btn.textContent;
+            btn.textContent = 'Enviando…';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.style.pointerEvents = 'none';
 
-            document.querySelector('.btn-submit').style.display = 'none';
-            document.querySelector('.submit-title').style.display = 'none';
-            document.querySelector('.submit-desc').style.display = 'none';
-            document.getElementById('success-msg').style.display = 'block';
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            // Enviar a Google Sheets via Apps Script
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwRmc5QZQXTho758PPT7qD_4m5eq3PD_TrTcSqXBczfx30QzsrhU7IUXPqEahQMKL3VuA/exec';
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                // Mostrar éxito
+                btn.style.display = 'none';
+                document.querySelector('.submit-title').style.display = 'none';
+                document.querySelector('.submit-desc').style.display = 'none';
+                document.getElementById('success-msg').style.display = 'block';
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            })
+            .catch(err => {
+                console.error('Error al enviar:', err);
+                btn.textContent = btnText;
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                alert('Hubo un error al enviar. Por favor intentá de nuevo.');
+            });
         }
     </script>
 </body>
