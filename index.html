@@ -2315,31 +2315,32 @@
             btn.style.opacity = '0.6';
             btn.style.pointerEvents = 'none';
 
-            // Enviar a Google Sheets via formulario oculto (evita CORS)
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLXwWWK-3OmKSXBotvTIO7BImy_fIatUD_XwvZj-SEUfs1csQqCA56M41cY9VWBtrSyA/exec';
+            // Enviar a Google Sheets via Apps Script
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwe01WQJPsksJ8WdHCXr1h4Coq_DMIJOWlfwNto8lIs3RJIkwFo8q_DKTs7xl6Cq9eWIQ/exec';
 
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = SCRIPT_URL;
-            form.target = 'hidden-iframe';
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'data';
-            input.value = JSON.stringify(payload);
-            form.appendChild(input);
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-
-            // Mostrar éxito
-            btn.style.display = 'none';
-            document.querySelector('.submit-title').style.display = 'none';
-            document.querySelector('.submit-desc').style.display = 'none';
-            document.getElementById('success-msg').style.display = 'block';
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(() => {
+                btn.style.display = 'none';
+                document.querySelector('.submit-title').style.display = 'none';
+                document.querySelector('.submit-desc').style.display = 'none';
+                document.getElementById('success-msg').style.display = 'block';
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            })
+            .catch(err => {
+                console.error('Error al enviar:', err);
+                btn.textContent = btnText;
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                alert('Hubo un error al enviar. Por favor intentá de nuevo.');
+            });
         }
     </script>
-<iframe name="hidden-iframe" style="display:none"></iframe>
 </body>
 
 </html>
