@@ -2315,14 +2315,13 @@
             btn.style.opacity = '0.6';
             btn.style.pointerEvents = 'none';
 
-            // Enviar a Google Sheets via Apps Script
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwe01WQJPsksJ8WdHCXr1h4Coq_DMIJOWlfwNto8lIs3RJIkwFo8q_DKTs7xl6Cq9eWIQ/exec';
+            // Enviar a Google Sheets via Apps Script (GET)
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrihPCej5jo_g1WFY03ZJT3AFb3GCM0hJ5Nr1lze-6LHPd418i9P9iWbzSFa7xqcsveQ/exec';
 
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload)
-            })
+            const url = new URL(SCRIPT_URL);
+            url.searchParams.set('data', JSON.stringify(payload));
+
+            fetch(url.toString())
             .then(r => r.json())
             .then(() => {
                 btn.style.display = 'none';
