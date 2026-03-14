@@ -2322,9 +2322,19 @@
             const url = new URL(SCRIPT_URL);
             url.searchParams.set('data', JSON.stringify(payload));
 
-            fetch(url.toString())
-            .then(r => r.json())
-            .then(() => {
+            const urlStr = url.toString();
+            console.log('URL length:', urlStr.length);
+            console.log('Payload size (chars):', JSON.stringify(payload).length);
+            console.log('Sending to:', SCRIPT_URL);
+
+            fetch(urlStr)
+            .then(r => {
+                console.log('Response status:', r.status, r.statusText);
+                console.log('Response type:', r.type);
+                return r.text();
+            })
+            .then(text => {
+                console.log('Response body:', text);
                 btn.style.display = 'none';
                 document.querySelector('.submit-title').style.display = 'none';
                 document.querySelector('.submit-desc').style.display = 'none';
@@ -2332,7 +2342,9 @@
                 window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             })
             .catch(err => {
-                console.error('Error al enviar:', err);
+                console.error('Fetch error type:', err.name);
+                console.error('Fetch error message:', err.message);
+                console.error('Full error:', err);
                 btn.textContent = btnText;
                 btn.disabled = false;
                 btn.style.opacity = '1';
