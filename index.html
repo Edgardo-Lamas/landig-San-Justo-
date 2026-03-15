@@ -2548,8 +2548,7 @@ Visión de éxito: ${cie.vision_exito}
                 document.getElementById('success-msg').style.display = 'block';
                 window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             })
-            .catch(err => {
-                console.error('EmailJS error:', err);
+            .catch(() => {
                 btn.textContent = btnText;
                 btn.disabled = false;
                 btn.style.opacity = '1';
