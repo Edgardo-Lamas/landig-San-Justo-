@@ -2307,7 +2307,8 @@
 
         // HORIZON ITEMS
         document.querySelectorAll('.horizon-item').forEach(item => {
-            item.addEventListener('click', () => {
+            item.addEventListener('click', e => {
+                e.preventDefault();
                 item.classList.toggle('active');
                 const i = item.querySelector('input');
                 if (i) i.checked = !i.checked;
