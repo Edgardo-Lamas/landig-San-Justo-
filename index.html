@@ -815,6 +815,42 @@
             display: block
         }
 
+        .mc-priority {
+            display: none;
+            margin-top: 8px;
+            gap: 4px;
+            width: 100%
+        }
+
+        .ministry-cell.active .mc-priority {
+            display: flex
+        }
+
+        .prio-btn {
+            flex: 1;
+            font-size: .6rem;
+            padding: 3px 2px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all .15s;
+            font-family: inherit
+        }
+
+        .prio-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold)
+        }
+
+        .prio-btn.selected {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #000;
+            font-weight: 700
+        }
+
         /* SUBMIT */
         #submit-section {
             background: var(--bg2);
@@ -2284,6 +2320,22 @@
             });
         });
 
+        // MINISTRY PRIORITY BUTTONS
+        document.querySelectorAll('.ministry-cell').forEach(cell => {
+            const div = document.createElement('div');
+            div.className = 'mc-priority';
+            div.innerHTML = '<button class="prio-btn" data-p="Alta">Alta</button><button class="prio-btn" data-p="Media">Media</button><button class="prio-btn" data-p="Baja">Baja</button>';
+            cell.appendChild(div);
+            div.querySelectorAll('.prio-btn').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    div.querySelectorAll('.prio-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+        });
+
         // SCALE BUTTONS
         document.querySelectorAll('.scale-selector').forEach(sel => {
             sel.querySelectorAll('.scale-btn').forEach(btn => {
@@ -2329,7 +2381,8 @@
         function updateNums() { plist.querySelectorAll('.priority-item').forEach((it, i) => it.querySelector('.p-num').textContent = i + 1) }
 
         // COLLECT
-        function getChecked(ctx) { return Array.from(ctx.querySelectorAll('.check-item.active,.ministry-cell.active,.horizon-item.active')).map(i => i.querySelector('input')?.value || i.dataset.v || '').filter(Boolean) }
+        function getChecked(ctx) { return Array.from(ctx.querySelectorAll('.check-item.active,.horizon-item.active')).map(i => i.querySelector('input')?.value || i.dataset.v || '').filter(Boolean) }
+        function getMinistryCells() { return Array.from(document.querySelectorAll('.ministry-cell.active')).map(cell => { const v = cell.querySelector('input')?.value || ''; const p = cell.querySelector('.prio-btn.selected')?.dataset.p || ''; return p ? `${v} [${p}]` : v }).filter(Boolean) }
         function getScale(g) { const b = document.querySelector(`.scale-selector[data-g="${g}"] .scale-btn.active`); return b ? b.dataset.v : '' }
         function getCard(name) { const i = document.querySelector(`input[name="${name}"]:checked`); return i ? i.value : '' }
         function getPrio() { return Array.from(plist.querySelectorAll('.priority-item')).map(i => i.dataset.v) }
@@ -2361,7 +2414,7 @@
                     necesidades_lideres_celda: getChecked(document.getElementById('seccion-2').querySelectorAll('.check-grid')[2]?.parentElement || document.getElementById('seccion-2')),
                 },
                 dimensiones_ministerio: {
-                    areas_activas: getChecked(document.getElementById('seccion-3')),
+                    areas_activas: getMinistryCells(),
                     ccp: {
                         alumnos: getScale('ccp_alumnos'),
                         modalidad: getChecked(document.querySelectorAll('#seccion-3 .check-grid')[0]?.closest('.form-group') || document.getElementById('seccion-3')),
